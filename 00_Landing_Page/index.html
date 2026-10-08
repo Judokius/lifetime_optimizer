@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Lebenszeit-Optimierer - Werkzeuge für bewusstere Mobilität." />
+    <title>Lebenszeit. · Optimierer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="script.js"></script>
+  </head>
+  <body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+
+    <main class="landing-shell">
+      <section class="intro" id="intro" aria-labelledby="intro-title">
+        <div class="intro-mark" aria-hidden="true">↗</div>
+        <p class="intro-label">Lebenszeit.</p>
+        <h1 id="intro-title">Lebenszeit ist das<br /><em>einzige, was wir haben.</em></h1>
+        <p class="intro-subtitle">Nutze sie bewusster.</p>
+        <div class="intro-progress" aria-hidden="true"><span></span></div>
+        <button class="skip-button" id="skip-intro" type="button">Direkt zu den Optimierern <span>→</span></button>
+      </section>
+
+      <section class="menu" id="menu" aria-labelledby="menu-title" hidden>
+        <header class="menu-header">
+          <a class="brand" href="index.html" aria-label="Lebenszeit Startseite"><span class="brand-mark">↗</span><span>Lebenszeit<span class="brand-accent">.</span></span></a>
+          <span class="menu-kicker">Werkzeuge für deine Zeit</span>
+        </header>
+
+        <div class="menu-intro">
+          <p class="eyebrow">Wähle deinen Optimierer</p>
+          <h2 id="menu-title">Mehr aus deiner<br /><em>Lebenszeit.</em></h2>
+          <p>Analysiere Wege, Kosten und Zeitaufwand. Finde heraus, welche Entscheidung dir am meisten Zeit zurückgibt.</p>
+        </div>
+
+        <div class="tool-grid">
+          <a class="tool-card tool-card-primary" href="../02_Commuter_Route_Optimizator/index.html">
+            <div class="tool-card-top"><span class="tool-icon">⌁</span><span class="tool-status">Bereit</span></div>
+            <div class="tool-card-body">
+              <p class="tool-number">01</p>
+              <h3>Pendelstrecken-<br />Optimierer</h3>
+              <p>Vergleiche Auto, ICE und Regionalzug auf deiner echten Route - nach Kosten, Reisezeit und verlorener Lebenszeit.</p>
+            </div>
+            <span class="tool-link">Optimierer öffnen <b>→</b></span>
+          </a>
+
+          <a class="tool-card" href="../01_Drive_Optimziation/index.html">
+            <div class="tool-card-top"><span class="tool-icon">↗</span><span class="tool-status">Bereit</span></div>
+            <div class="tool-card-body">
+              <p class="tool-number">02</p>
+              <h3>Drive<br />Optimizer</h3>
+              <p>Optimiere Geschwindigkeit, Verbrauch und Kosten für deine Autofahrt.</p>
+            </div>
+            <span class="tool-link">Optimierer öffnen <b>→</b></span>
+          </a>
+        </div>
+
+        <footer class="menu-footer">
+          <span>Jede Minute zählt.</span>
+          <span>Lebenszeit. <i>Bewusst bewegen.</i></span>
+        </footer>
+      </section>
+    </main>
+  </body>
+</html>
