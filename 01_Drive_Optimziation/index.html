@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Lebenszeit-Optimierer: Fahrgeschwindigkeit und Energiekosten gemeinsam optimieren." />
+    <title>Lebenszeit-Optimierer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script defer src="script.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="brand" href="#" aria-label="Lebenszeit-Optimierer Startseite">
+          <span class="brand-mark">↗</span>
+          <span>Lebenszeit<span class="brand-accent">.</span></span>
+        </a>
+        <span class="header-note">Fahrzeit trifft Energiekosten</span>
+      </div>
+    </header>
+
+    <main class="shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Lebenszeit ist das wichtigste Budget</p>
+          <h1>Finde die effizienteste <em>Pendelart.</em></h1>
+          <p class="hero-copy">Vergleiche Auto, ICE und Regionalverkehr nicht nur nach Geld, sondern danach, wie viel deiner Lebenszeit jede Strecke wirklich bindet.</p>
+        </div>
+        <div class="hero-stat" aria-label="Berechnungshinweis">
+          <span class="hero-stat-icon">⌁</span>
+          <span>Physikalisches Modell<br /><strong>für realistische Näherungen</strong></span>
+        </div>
+      </section>
+
+      <section class="mode-picker" aria-labelledby="mode-title">
+        <div><p class="eyebrow">Start</p><h2 id="mode-title">Wie möchtest du vergleichen?</h2></div>
+        <div class="mode-options">
+          <label class="mode-option"><input type="radio" name="app-mode" value="calculator" checked /><span><strong>Nur Rechner</strong><small>Geschwindigkeit, Kosten und Kennwerte</small></span></label>
+          <label class="mode-option"><input type="radio" name="app-mode" value="navigation" /><span><strong>Mit Navigation</strong><small>Route, reine Fahrzeit und Lebenszeitkosten</small></span></label>
+        </div>
+      </section>
+
+      <div class="dashboard-grid">
+        <section class="card input-card" aria-labelledby="settings-title">
+          <div class="card-heading">
+            <div>
+              <p class="eyebrow">01 / Deine Parameter</p>
+              <h2 id="settings-title">Was ist dir deine Zeit wert?</h2>
+            </div>
+            <span class="step-badge">Setup</span>
+          </div>
+
+          <form id="optimizer-form">
+            <div class="form-grid">
+              <label class="field">
+                <span class="label-row"><span>Stundenlohn netto</span><span class="unit">€/Std.</span></span>
+                <span class="input-wrap"><input id="hourly-wage" type="number" min="0" step="1" value="25" required /><span>€</span></span>
+                <small>Dein Nettoverdienst pro Arbeitsstunde</small>
+              </label>
+              <label class="field">
+                <span class="label-row"><span>Fahrstrecke</span><span class="unit">Kilometer</span></span>
+                <span class="input-wrap"><input id="distance" type="number" min="1" step="1" value="35" required /><span>km</span></span>
+                <small><select id="trip-type" aria-label="Art der Strecke"><option value="one-way">Einfache Strecke</option><option value="round-trip" selected>Hin &amp; zurück</option></select></small>
+              </label>
+            </div>
+
+            <div class="divider"></div>
+            <div class="vehicle-builder">
+            <div class="builder-title"><span class="label-row"><span>Fahrzeug zusammenstellen</span><span class="unit">Profil</span></span></div>
+            <div class="form-grid">
+              <label class="field"><span class="label-row"><span>Kategorie</span><span class="unit">Karosserie</span></span><select id="vehicle-category" class="select-input"><option value="compact">Kompakt</option><option value="wagon" selected>Kombi</option><option value="suv">SUV</option><option value="small">Kleinwagen</option><option value="sport">Sportwagen</option></select></label>
+              <label class="field"><span class="label-row"><span>Antrieb</span><span class="unit">Energie</span></span><select id="vehicle-fuel" class="select-input"><option value="diesel" selected>Diesel</option><option value="petrol">Benzin</option><option value="electric">Elektro</option></select></label>
+            </div>
+            <div class="form-grid">
+              <label class="field"><span class="label-row"><span>Fahrzeugalter</span><span class="range-value" id="age-value">5 Jahre</span></span><input id="vehicle-age" class="range-input" type="range" min="0" max="20" value="5" /><span class="range-scale"><span>Neuwagen</span><span>20 Jahre</span></span></label>
+              <label class="field"><span class="label-row"><span>Leistung</span><span class="range-value" id="power-value">150 PS</span></span><input id="vehicle-power" class="range-input" type="range" min="60" max="450" step="10" value="150" /><span class="range-scale"><span>60 PS</span><span>450 PS</span></span></label>
+            </div>
+            <small id="vehicle-description">Kombi · Diesel · 150 PS · 5 Jahre</small>
+            </div>
+
+            <div class="form-grid">
+              <label class="field">
+                <span class="label-row"><span id="energy-label">Dieselpreis</span><span class="unit">Richtwert</span></span>
+                <span class="input-wrap"><input id="energy-price" type="number" min="0" step="0.01" value="1.72" required /><span id="energy-unit">€/l</span></span>
+                <small>Kann jederzeit überschrieben werden</small>
+              </label>
+              <label class="field">
+                <span class="label-row"><span>Verkehr &amp; Wetter</span><span class="unit">Annahme</span></span>
+                <select id="conditions" class="select-input">
+                  <option value="calm" selected>Freie Strecke · trocken</option>
+                  <option value="traffic">Etwas Verkehr</option>
+                  <option value="headwind">Gegenwind · 15 km/h</option>
+                </select>
+                <small>Beeinflusst den realen Verbrauch</small>
+              </label>
+            </div>
+            <button class="primary-button" type="submit">Optimale Geschwindigkeit berechnen <span>→</span></button>
+          </form>
+        </section>
+
+        <aside class="card result-card" aria-labelledby="result-title">
+          <div class="card-heading">
+            <div>
+              <p class="eyebrow">02 / Deine Empfehlung</p>
+              <h2 id="result-title">Der Sweet Spot</h2>
+            </div>
+            <span class="live-dot" title="Berechnung aktiv"></span>
+          </div>
+          <div class="optimal-speed">
+            <span class="speed-number" id="optimal-speed">—</span><span class="speed-unit">km/h</span>
+          </div>
+          <p class="result-lead" id="result-lead">Berechne deine persönliche optimale Geschwindigkeit.</p>
+          <div class="metric-list">
+            <div class="metric"><span>Gesamte Lebenszeit</span><strong id="total-time">—</strong></div>
+            <div class="metric"><span>Davon Energiekosten</span><strong id="energy-cost">—</strong></div>
+            <div class="metric"><span>Verbrauch bei Sweet Spot</span><strong id="consumption">—</strong></div>
+            <div class="metric"><span>Fahrzeugkosten pro Fahrt</span><strong id="trip-cost">—</strong></div>
+          </div>
+          <div class="insight"><span class="insight-icon">✦</span><p id="insight-text">Die Berechnung berücksichtigt Luftwiderstand, Rollwiderstand und den Wirkungsgrad des Antriebs.</p></div>
+        </aside>
+      </div>
+
+      <section class="card chart-card" aria-labelledby="chart-title">
+        <div class="chart-heading">
+          <div>
+            <p class="eyebrow">03 / Geschwindigkeitsvergleich</p>
+            <h2 id="chart-title">Jede Minute hat ihren Preis</h2>
+            <p class="section-copy">Fahrzeit plus die Arbeitszeit, die du für die Energiekosten aufwenden musst.</p>
+          </div>
+          <div class="legend"><span class="legend-dot"></span> Lebenszeit pro Fahrt</div>
+        </div>
+        <div class="chart-wrap"><canvas id="lifetime-chart" aria-label="Diagramm der Lebenszeit nach Geschwindigkeit" role="img"></canvas></div>
+      </section>
+
+      <details class="expert-panel">
+        <summary><span><b>Expertenmodus</b><small>Muscheldiagramm, Kostenmodell und technische Details einblenden</small></span><i>+</i></summary>
+      <section class="card shell-card" aria-labelledby="engine-title">
+        <div class="chart-heading">
+          <div><p class="eyebrow">04 / Motorcharakteristik</p><h2 id="engine-title">Verbrauchskennfeld als Muscheldiagramm</h2><p class="section-copy">Näherung aus Drehzahl, Last und Wirkungsgrad. Der Punkt markiert den Betrieb bei deiner empfohlenen Geschwindigkeit.</p></div>
+          <div class="legend"><span class="legend-dot green-dot"></span> effizienter Bereich</div>
+        </div>
+        <div class="chart-wrap shell-chart"><canvas id="engine-chart" aria-label="Muscheldiagramm des Motorverbrauchs" role="img"></canvas></div>
+      </section>
+
+      <section class="card shell-card" aria-labelledby="cost-title">
+        <div class="chart-heading"><div><p class="eyebrow">05 / Fahrzeugbudget</p><h2 id="cost-title">Was kostet dein Fahrzeug wirklich?</h2><p class="section-copy">Fixkosten pro Jahr plus variable Kosten deiner Strecke.</p></div><strong class="annual-total" id="annual-cost">—</strong></div>
+        <div class="cost-grid">
+          <div class="cost-item"><span>Steuer &amp; Versicherung</span><strong id="fixed-cost">—</strong><small>jährlich · abhängig von Alter, Leistung und Antrieb</small></div>
+          <div class="cost-item"><span>Wertverlust</span><strong id="depreciation-cost">—</strong><small>jährlich · altersgewichtete Näherung</small></div>
+          <div class="cost-item"><span>Verschleiß pro Fahrt</span><strong id="wear-cost">—</strong><small>Reifen, Wartung und Bremsen</small></div>
+          <div class="cost-item accent-cost"><span>Gesamtkosten dieser Fahrt</span><strong id="total-trip-cost">—</strong><small>Energie + Verschleiß</small></div>
+        </div>
+      </section>
+      </details>
+
+      <section class="card shell-card route-card" id="navigation-panel" aria-labelledby="route-title" hidden>
+        <div class="chart-heading"><div><p class="eyebrow">06 / Deine Route</p><h2 id="route-title">Welche Pendelart schenkt dir Zeit?</h2><p class="section-copy">Gib Start und Ziel ein. Die Straßenroute wird über OpenStreetMap geocodiert und mit OSRM berechnet.</p></div><span class="step-badge">API-Route</span></div>
+        <form id="route-form" class="route-form">
+          <label class="field"><span class="label-row"><span>Start</span></span><input id="route-start" class="text-input" required value="Berlin Hauptbahnhof" placeholder="z. B. Berlin" /></label>
+          <label class="field"><span class="label-row"><span>Ziel</span></span><input id="route-end" class="text-input" required value="Hamburg Hauptbahnhof" placeholder="z. B. Hamburg" /></label>
+          <button class="primary-button route-button" type="submit">Route berechnen <span>→</span></button>
+        </form>
+        <p class="api-status" id="route-status">Noch keine Route berechnet. Die Kartenansicht erscheint nach dem Start der Routenberechnung.</p>
+        <div id="route-map" class="route-map"></div>
+        <div class="route-results" id="route-results" hidden>
+          <div class="route-result auto-result"><span class="result-icon">↗</span><div><strong>Auto · reine Fahrzeit</strong><span id="route-car-time">—</span><small id="route-car-detail">—</small><small id="route-car-life">Lebenszeitkosten: —</small></div></div>
+          <div class="route-result"><span class="result-icon">▣</span><div><strong>Bahn · ICE</strong><span id="rail-ice-time">—</span><small id="rail-ice-cost">—</small><small id="rail-ice-life">Lebenszeitbindung: —</small></div></div>
+          <div class="route-result"><span class="result-icon">▣</span><div><strong>Regionalverkehr</strong><span id="rail-regio-time">—</span><small id="rail-regio-cost">Deutschlandticket-Schätzung</small><small id="rail-regio-life">Lebenszeitbindung: —</small></div></div>
+        </div>
+      </section>
+
+      <section class="model-note">
+        <span class="model-icon">∑</span>
+        <div><strong>Was steckt dahinter?</strong><p>Das Modell nähert den Verbrauch über Luft- und Rollwiderstand, Fahrzeugmasse, Antriebswirkungsgrad und einen Teillast-Zuschlag an. Bei zu niedriger Geschwindigkeit arbeitet ein Verbrenner ineffizienter – bei hoher Geschwindigkeit steigt der Luftwiderstand quadratisch.</p></div>
+      </section>
+    </main>
+    <footer class="shell footer"><span>Lebenszeit-Optimierer</span><span>Eine Näherung für bessere Entscheidungen · keine Verbrauchsgarantie</span></footer>
+  </body>
+</html>
